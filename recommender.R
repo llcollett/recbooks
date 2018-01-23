@@ -94,7 +94,7 @@ recbooks_pop<-merge(booklist,recbooks_pop)
 #UBCF
 r_ubcf<-Recommender(real[1:4000],method="UBCF")
 rec_ubcf<-predict(r_ubcf,real[4253],n=5)
-recbooks_ubcf<-as.data.frame(as(recom_ubcf,"list"))
+recbooks_ubcf<-as.data.frame(as(rec_ubcf,"list"))
 recbooks_ubcf$id<-as.numeric(gsub("[b]","",recbooks_ubcf$u4253))
 recbooks_ubcf<-recbooks_ubcf[c("id")]
 recbooks_ubcf<-merge(booklist,recbooks_ubcf)
