@@ -10,17 +10,18 @@ setwd("O:/Documents/Personal/Projects/books")
 #read in data
 books<-read_csv("goodreads_library_export.csv")
 books<-as.data.frame(books)
-books<-books[c("Book Id","Title","Author","My Rating","Exclusive Shelf")]
-colnames(books)<-c("id","btitle","bauthor","rrating","shelf")
+books<-books[c("Book Id","Title","My Rating","Exclusive Shelf")]
+colnames(books)<-c("id","btitle","rrating","shelf")
 books<-books[order(books$id),]
 books<-subset(books,books$shelf=="read" | books$shelf=="to-read" | books$shelf=="to-acquire")
 books$ruser<-"Me:21580571"
 books$rtitle<-paste(books$btitle,books$id,sep=":")
 books$n<-ave(books$rrating,books$id,FUN=seq_along)
-books<-books[c("ruser","bauthor","rtitle","btitle","rrating","id","n")]
+books<-books[c("ruser","rtitle","btitle","rrating","id","n")]
 
 #booklist
-booklist<-books[c("id","bauthor","btitle")]
+booklist<-books[c("id","btitle")]
+save(booklist,file="booklist.Rda")
 
 #API
 #packages
@@ -35,7 +36,7 @@ Sys.setenv(GOODREADS_KEY="7U8VDuR3phc4vD1WQF1g")
 #API request results in the form of an nxm matrix outputting reviews systematically
 #at fixed intervals to avoid losing data if system crashes under weight of processing
 n<-50000
-m<-100
+m<-10
 ruser<-matrix(rep(0,n),nrow=n,ncol=m)
 rtitle<-matrix(rep(0,n),nrow=n,ncol=m)
 btitle<-matrix(rep(0,n),nrow=n,ncol=m)
@@ -73,6 +74,7 @@ for (i in 1:n) {
   }
 }
 reviews<-eval(parse(text=paste0("rbind(",toString(paste0("rbooks",1:m)),")")))
+reviews<-rbind(reviews,books)
 reviews<-reviews[order(reviews$id),]
 
 #saves data
